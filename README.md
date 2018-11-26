@@ -1,1 +1,1 @@
-My first "hello-world" git program/
+My first "hello-world" git program
