@@ -44,3 +44,41 @@ def game():
             image = image.convert_alpha()
         return image
 
+    #  ---------------------------------- end_game + win ----------------------------------->
+
+    def end_game():
+        pygame.mixer.music.load('data/game_over.mp3')
+        pygame.mixer.music.play(0, 0.5)
+        pygame.time.wait(2700)
+        print(5/0)
+
+    def win():
+        pygame.display.flip()
+        pygame.mixer.music.load('data/win.mp3')
+        pygame.mixer.music.play(0)
+        pygame.time.wait(6300)
+        print(5/0)
+
+    # ------------------------------------ Heart + show_hearts ----------------------------->
+
+    class Heart(pygame.sprite.Sprite):
+        def __init__(self, group, x, y):
+            super().__init__(group)
+
+            self.image = pygame.transform.scale(load_image('heart.png', -1), (pr(50), pr(48)))
+            self.rect = self.image.get_rect()
+            self.rect.x = x
+            self.rect.y = y
+
+        def delete(self):
+            self.rect.x = width
+            self.rect.y = height
+
+    def show_hearts(count):
+        hearts.draw(screen)
+        if count == 1:
+            heart1.delete()
+        if count == 2:
+            heart2.delete()
+        if count >= 3:
+            heart3.delete()
