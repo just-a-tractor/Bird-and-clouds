@@ -82,3 +82,83 @@ def game():
             heart2.delete()
         if count >= 3:
             heart3.delete()
+            
+
+    # ---------------------------------------- Bird ---------------------------------------->
+
+    class Bird(pygame.sprite.Sprite):
+        def __init__(self, group, sheet, columns, rows, fps):
+            super().__init__(group)
+            self.frames = []
+            self.cut_sheet(sheet, columns, rows)
+            self.cur_frame = 0
+            self.image = pygame.transform.scale(self.frames[self.cur_frame], (pr(75), pr(75)))
+            self.rect = self.image.get_rect()
+            self.fps = fps
+
+            self.flag1 = False
+            self.flag2 = True
+
+            self.clouds = []
+
+            self.mask = pygame.mask.from_surface(self.image)
+
+            self.countTicks = 0
+
+            self.countTicks1 = 0
+            self.forgot_sec = 5
+
+        def set_pos(self, x, y):
+            self.rect.x = x
+            self.rect.y = y
+
+        def check_v(self, v, ticks):
+            if self.rect.y >= pr(300):
+                self.rect.y -= v * ticks/1000
+                return False
+            return True
+
+        def check(self, cloud, sc1, sc2):
+            self.mask = pygame.mask.from_surface(self.image)
+
+            if pygame.sprite.collide_mask(self, cloud):
+                sc1 -= 10000
+                if cloud not in self.clouds:
+                    sc2 += 1
+                    self.clouds.append(cloud)
+
+            return sc1, sc2
+
+        def cut_sheet(self, sheet, columns, rows):
+            self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                    sheet.get_height() // rows)
+            for j in range(rows):
+                for m in range(columns):
+                    frame_location = (self.rect.w * m, self.rect.h * j)
+                    self.frames.append(sheet.subsurface(pygame.Rect(
+                        frame_location, self.rect.size)))
+
+        def update(self, ticks, h):
+
+            self.countTicks += ticks
+
+            if self.countTicks > 1000 / self.fps:
+                self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+                self.image = pygame.transform.scale(self.frames[self.cur_frame], (pr(75), pr(75)))
+                self.countTicks = 0
+
+            self.countTicks1 += ticks
+
+            if self.countTicks1 / 1000 > self.forgot_sec:
+                try:
+                    self.clouds.pop()
+                except IndexError:
+                    pass
+                self.countTicks1 = 0
+
+            if h <= pr(height - height//4 + height//9.19):
+                self.rect.y -= v_high * 0.5 * ticks/1000
+
+            if self.rect.y >= height-pr(75):
+                end_game()
+
