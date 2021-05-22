@@ -82,7 +82,6 @@ def game():
             heart2.delete()
         if count >= 3:
             heart3.delete()
-            
 
     # ---------------------------------------- Bird ---------------------------------------->
 
@@ -162,7 +161,6 @@ def game():
             if self.rect.y >= height-pr(75):
                 end_game()
 
-
     # ---------------------------------------- Ground ---------------------------------------->
 
     class Ground(pygame.sprite.Sprite):
@@ -197,7 +195,7 @@ def game():
             else:
                 return 0
 
-# ---------------------------------------- Cloud ---------------------------------------->
+    # ---------------------------------------- Cloud ---------------------------------------->
 
     class Cloud(pygame.sprite.Sprite):
         def __init__(self, group, image, y1, v):
@@ -287,7 +285,6 @@ def game():
     heart1 = Heart(hearts, width-width//7, pr(30))
     heart2 = Heart(hearts, width-width//7+width//20, pr(30))
     heart3 = Heart(hearts, width-width//7+width//10, pr(30))
-
 
     # ---------------------------------------- running ---------------------------------------->
 
