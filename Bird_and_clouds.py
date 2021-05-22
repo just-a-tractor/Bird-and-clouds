@@ -287,3 +287,108 @@ def game():
     heart1 = Heart(hearts, width-width//7, pr(30))
     heart2 = Heart(hearts, width-width//7+width//20, pr(30))
     heart3 = Heart(hearts, width-width//7+width//10, pr(30))
+
+
+    # ---------------------------------------- running ---------------------------------------->
+
+    while running:
+        bird.vy = pr(50)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    flag1 = True
+                if event.key == pygame.K_c and event.mod == 1:
+                    score += 1000
+            if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+                flag1 = False
+
+        clk = clock.tick(60)
+
+        if flag1:
+            bird_speed += pr(250) * clk / 1000
+            if v_high < pr(200):
+                v_high += pr(700) * clk / 1000
+            wall.rect.y += v_high * clk / 1000
+            a = bird.check_v(v_high, clk)
+            if not a:
+                v_high = 0
+
+        screen.blit(fon, (0, 0), fon.get_rect())
+
+        for i in grounds:
+            flag_h = i.update(clk, v_high)
+
+        for i in clouds:
+            sc = i.update(clk, v_high)
+
+        if bird_speed > pr(200):
+            bird_speed -= pr(5)
+        if v_high > -pr(150):
+            v_high -= pr(10)
+
+        if sc:
+            score += (((sc + 1500) * clk // 10000) * 10 ** 3) // 1000
+
+        if score < 0:
+            score = 0
+
+        font1 = pygame.font.Font(None, int(width / 18.75))
+
+        string_rendered1 = font1.render(str(score), 1, (230, 168, 14))
+        intro_rect1 = string_rendered1.get_rect()
+        intro_rect1.y = pr(30)
+        intro_rect1.x = width - width // 3
+
+        for i in clouds:
+            score, score1 = bird.check(i, score, score1)
+        bird.update(clk, flag_h)
+        grounds.draw(screen)
+        birds.draw(screen)
+        clouds.draw(screen)
+        show_hearts(score1)
+        screen.blit(string_rendered1, intro_rect1)
+
+        pygame.display.flip()
+
+        if score1 >= 3:
+            end_game()
+        if score >= win_level:
+            win()
+
+    pygame.quit()
+
+
+pygame.init()
+
+size1 = width1, height1 = 1500, int(1500/1.875)
+screen1 = pygame.display.set_mode(size1)
+
+ans = True
+while ans:
+    try:
+        game()
+    except ZeroDivisionError:
+        pik = True
+        while pik:
+            for ev in pygame.event.get():
+                if ev.type == pygame.QUIT:
+                    pygame.quit()
+                if ev.type == pygame.MOUSEBUTTONDOWN and width1//2-width1//7 < ev.pos[0] < \
+                        width1//2-width1//7 + width1//3.5 and height1//2-height1//10 + height1//5 \
+                        > ev.pos[1] > height1//2-height1//10:
+                    pik = False
+            pygame.draw.rect(screen1, (154, 154, 154),
+                             (width1//2-width1//7, height1//2-height1//10, width1//3.5, height1//5))
+
+            font2 = pygame.font.Font(None, 60)
+
+            string_rendered2 = font2.render('Начать заново', 1, (0, 0, 0))
+            intro_rect2 = string_rendered2.get_rect()
+            intro_rect2.y = height1//2-height1//30
+            intro_rect2.x = width1//2-width1//8
+
+            screen1.blit(string_rendered2, intro_rect2)
+
+            pygame.display.flip()
