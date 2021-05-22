@@ -225,3 +225,65 @@ def game():
 
             self.rect.x = self.pos_x
             self.rect.y = self.pos_y
+
+    # ---------------------------------------- Wall ---------------------------------------->
+
+    class Wall(pygame.sprite.Sprite):
+        def __init__(self, group, image, y1):
+            super().__init__(group)
+            self.image = pygame.transform.scale(load_image(image, -1), (pr(1768), pr(172)))
+            self.rect = self.image.get_rect()
+            self.rect.x = 0
+            self.rect.y = y1
+            self.pos_x = self.rect.x
+            self.pos_y = self.rect.y
+
+        def update(self, ticks, v):
+            self.pos_x -= bird_speed * ticks / 1000
+            if self.pos_x <= -pr(147):
+                self.pos_x = 0
+
+            self.pos_y += v * ticks / 1000 * 0.4
+
+            self.rect.x = self.pos_x
+            self.rect.y = self.pos_y
+
+            if self.rect.y >= pr(height // 2 - height // 8 - pr(172) + pr(75/2)):
+                end_game()
+
+            return self.rect.y
+
+    # ---------------------------------------- Settings ---------------------------------------->
+
+    score = 0
+    score1 = 0
+    sc = 0
+    flag1 = False
+    flag_h = 0
+
+    Ground(grounds, "fon4.png", 325, 0.25)
+    Ground(grounds, "fon3.png", 239, 0.5)
+    Ground(grounds, "fon1.png", 158, 0.75)
+    Ground(grounds, "fon2.png", 113, 1, True)
+
+    for _ in range(20):
+        Cloud(clouds, 'cloud3.png', random.randint(-height, 0), random.random()+0.25)
+
+    Cloud(clouds, 'cloud3.png', height // 2 - height // 8 - pr(172) + pr(75/2), random.random()+0.25)
+    Cloud(clouds, 'cloud3.png', height // 2 - height // 8 - pr(172) + pr(75), random.random()+0.25)
+
+    wall = Wall(clouds, 'wall2.png', -height)
+
+    bird = Bird(birds, load_image("bird3.png", -1), 3, 3, 10)
+    bird.set_pos(width // 10, height // 2 - height // 8)
+
+    clock = pygame.time.Clock()
+    running = True
+
+    v_high = 0
+
+    fon = load_image('fon5.png')
+
+    heart1 = Heart(hearts, width-width//7, pr(30))
+    heart2 = Heart(hearts, width-width//7+width//20, pr(30))
+    heart3 = Heart(hearts, width-width//7+width//10, pr(30))
