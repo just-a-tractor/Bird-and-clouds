@@ -162,3 +162,66 @@ def game():
             if self.rect.y >= height-pr(75):
                 end_game()
 
+
+    # ---------------------------------------- Ground ---------------------------------------->
+
+    class Ground(pygame.sprite.Sprite):
+        def __init__(self, group, image, y1, v, ret=False):
+            super().__init__(group)
+            self.y = height//4
+            self.v = v
+            self.image = pygame.transform.scale(load_image(image, -1), (pr(5100), pr(y1)))
+            self.rect = self.image.get_rect()
+            self.rect.x = 0
+            self.down = height - pr(y1)
+            self.rect.y = self.down
+            self.pos_x = self.rect.x
+            self.pos_y = self.rect.y
+            self.ret = ret
+
+        def update(self, ticks, v):
+            self.pos_x -= self.v * bird_speed * ticks/1000
+            if self.pos_x <= -pr(3550):
+                self.pos_x = 0
+
+            self.pos_y += v * self.v * ticks/1000 * 0.5
+
+            if self.pos_y <= self.down:
+                self.pos_y = self.down
+
+            self.rect.y = self.pos_y
+            self.rect.x = self.pos_x
+
+            if self.ret:
+                return self.rect.y
+            else:
+                return 0
+
+# ---------------------------------------- Cloud ---------------------------------------->
+
+    class Cloud(pygame.sprite.Sprite):
+        def __init__(self, group, image, y1, v):
+            super().__init__(group)
+            k = random.randint(2, 3)
+            self.size = 'small' if k < 3 else 'big'
+            self.left = 300//k
+            self.image = pygame.transform.scale(load_image(image, -1), (pr(300//k), pr(173//k)))
+            self.rect = self.image.get_rect()
+            self.rect.x = random.randint(0, width)
+            self.rect.y = y1
+            self.v = v
+
+            self.mask = pygame.mask.from_surface(self.image)
+
+            self.pos_x = self.rect.x
+            self.pos_y = self.rect.y
+
+        def update(self, ticks, v):
+            self.pos_x -= self.v * bird_speed * ticks / 1000
+            if self.pos_x <= -self.left:
+                self.pos_x = width
+
+            self.pos_y += v * self.v * ticks / 1000 * 0.5
+
+            self.rect.x = self.pos_x
+            self.rect.y = self.pos_y
